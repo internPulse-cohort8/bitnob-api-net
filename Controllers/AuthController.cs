@@ -105,5 +105,17 @@ namespace InternPulse4.Controllers
                 }
             };
         }
+
+
+        [HttpPost("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmail request)
+        {
+            var response = await _userService.ConfirmEmailAsync(request);
+            if (!response.IsSuccessful)
+            {
+                return BadRequest(response);
+            }
+            return Ok(response);
+        }
     }
 }

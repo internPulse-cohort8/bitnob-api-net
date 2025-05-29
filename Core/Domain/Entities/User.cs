@@ -11,9 +11,15 @@ namespace InternPulse4.Core.Domain.Entities
         public string? Password { get; set; }
         public Role Role { get; set; }
 
+        public bool IsEmailConfirmed { get; set; }
+
+        public string? EmailConfirmationToken { get; set; } 
+        public DateTime? TokenExpiry { get; set; }
+
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
         public bool RememberMe { get; set; }
     }
+
 
 }

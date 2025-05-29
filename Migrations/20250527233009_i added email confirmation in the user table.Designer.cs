@@ -3,6 +3,7 @@ using System;
 using InternPulse4.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace InternPulse4.Migrations
 {
     [DbContext(typeof(InternPulseContext))]
-    partial class InternPulseContextModelSnapshot : ModelSnapshot
+    [Migration("20250527233009_i added email confirmation in the user table")]
+    partial class iaddedemailconfirmationintheusertable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,6 +47,7 @@ namespace InternPulse4.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("EmailConfirmationToken")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("FirstName")
@@ -90,14 +94,14 @@ namespace InternPulse4.Migrations
                         {
                             Id = 1,
                             CreatedBy = "ManualRegistration",
-                            DateCreated = new DateTime(2025, 5, 29, 16, 29, 11, 561, DateTimeKind.Utc).AddTicks(7481),
+                            DateCreated = new DateTime(2025, 5, 27, 23, 30, 8, 716, DateTimeKind.Utc).AddTicks(7997),
                             Email = "oyebohm@gmail.com",
                             EmailConfirmationToken = "dummy-token",
                             FirstName = "Hasbiy",
                             IsDeleted = false,
                             IsEmailConfirmed = false,
                             LastName = "Oyebo",
-                            Password = "$2a$11$5dKnbgA98XHU6tqXSuTN..Rzb6APSUl9c8LnDQsUBQyZXtRpOUDX6",
+                            Password = "$2a$11$JQFpPFzYJmUY6A9bh/CUfOd9BedofRewUqYe808ktwsSI5Gy7g.eS",
                             RememberMe = false,
                             Role = 1
                         });
