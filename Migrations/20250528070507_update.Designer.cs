@@ -3,6 +3,7 @@ using System;
 using InternPulse4.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace InternPulse4.Migrations
 {
     [DbContext(typeof(InternPulseContext))]
-    partial class InternPulseContextModelSnapshot : ModelSnapshot
+    [Migration("20250528070507_update")]
+    partial class update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -90,14 +93,14 @@ namespace InternPulse4.Migrations
                         {
                             Id = 1,
                             CreatedBy = "ManualRegistration",
-                            DateCreated = new DateTime(2025, 5, 29, 16, 29, 11, 561, DateTimeKind.Utc).AddTicks(7481),
+                            DateCreated = new DateTime(2025, 5, 28, 7, 5, 6, 101, DateTimeKind.Utc).AddTicks(3315),
                             Email = "oyebohm@gmail.com",
                             EmailConfirmationToken = "dummy-token",
                             FirstName = "Hasbiy",
                             IsDeleted = false,
                             IsEmailConfirmed = false,
                             LastName = "Oyebo",
-                            Password = "$2a$11$5dKnbgA98XHU6tqXSuTN..Rzb6APSUl9c8LnDQsUBQyZXtRpOUDX6",
+                            Password = "$2a$11$9DfQoAF6vwk4kRm./jYtgOSPL102YhcGpXBV06QSqNPdFEkbkzyyO",
                             RememberMe = false,
                             Role = 1
                         });

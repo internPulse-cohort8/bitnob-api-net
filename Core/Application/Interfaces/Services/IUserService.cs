@@ -11,5 +11,7 @@ namespace InternPulse4.Core.Application.Interfaces.Services
         Task<BaseResponse> UpdateUser(int id, UserRequest request);
         Task<BaseResponse<UserResponse>> Login(UserRequest.LoginRequestModel model);
         Task<BaseResponse<UserResponse>> CreateUser(UserRequest request);
+
+        Task<BaseResponse<UserResponse>> ConfirmEmailAsync(ConfirmEmail request);
     }
 }

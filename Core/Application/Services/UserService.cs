@@ -15,19 +15,30 @@ namespace InternPulse4.Core.Application.Services
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
-        public UserService(IUserRepository userRepository,  IUnitOfWork unitOfWork, IHttpContextAccessor httpContext, IConfiguration configuration)
+        private readonly IEmailService _emailService;
+        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork, IHttpContextAccessor httpContext, IConfiguration configuration, IEmailService emailService)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
             _httpContext = httpContext;
             _configuration = configuration;
+            _emailService = emailService;
         }
-
         public async Task<BaseResponse<UserResponse>> CreateUser(UserRequest request)
         {
-            int randomCode = new Random().Next(10000, 99999);
+            // Check if email is null or empty or whitespace
+            if (string.IsNullOrWhiteSpace(request.Email))
+            {
+                return new BaseResponse<UserResponse>
+                {
+                    Message = "Email cannot be empty",
+                    IsSuccessful = false
+                };
+            }
 
-            if ( await _userRepository.ExistsAsync(request.Email))
+            int randomCode = new Random().Next(100000, 999999); // 6-digit token
+
+            if (await _userRepository.ExistsAsync(request.Email))
             {
                 return new BaseResponse<UserResponse>
                 {
@@ -35,45 +46,66 @@ namespace InternPulse4.Core.Application.Services
                     IsSuccessful = false
                 };
             }
-            else
+
+            if (request.Password != request.ConfirmPassword)
             {
-                if (request.Password != request.ConfirmPassword)
-                {
-                    return new BaseResponse<UserResponse>
-                    {
-                        Message = "Password does not match",
-                        IsSuccessful = false
-                    };
-                }
-
-                var user = new User
-                {
-                    Email = request.Email,
-                    Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
-                    FirstName = request.FirstName,
-                    LastName = request.LastName,
-                    DateCreated = DateTime.UtcNow,
-                    IsDeleted = false,
-                    Role = Domain.Enums.Role.User,
-                    CreatedBy = "ManualRegistration",
-                };
-
-                var newUser = await _userRepository.AddAsync(user);
-                await _unitOfWork.SaveAsync();
-
                 return new BaseResponse<UserResponse>
                 {
-                    Message = "Registration Successful",
-                    IsSuccessful = true,
-                    Value = new UserResponse
-                    {
-                        Id = user.Id,
-                        FullName = user.FirstName + " " + user.LastName,
-                        Email = user.Email,
-                        RoleName = user.Role.ToString(),
-                    }
+                    Message = "Password does not match",
+                    IsSuccessful = false
                 };
             }
+
+            var user = new User
+            {
+                Email = request.Email,
+                Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                DateCreated = DateTime.UtcNow,
+                IsDeleted = false,
+                Role = Domain.Enums.Role.User,
+                CreatedBy = "ManualRegistration",
+                EmailConfirmationToken = randomCode.ToString(),
+                TokenExpiry = DateTime.UtcNow.AddMinutes(15),
+                IsEmailConfirmed = false
+            };
+
+            var newUser = await _userRepository.AddAsync(user);
+            await _unitOfWork.SaveAsync();
+
+            // Send confirmation email
+            string subject = "Your Email Confirmation Code";
+
+            string body = $@"
+                       Dear {user.FirstName},
+                   Thank you for registering with us.
+
+               Your email confirmation code is: {randomCode}
+
+                     Please enter this code to verify your email address.  
+                      Note: This code will expire in 10 minutes.
+
+                 If you did not request this registration, please ignore this message.
+
+                        Best regards,  
+                     ";
+
+            await _emailService.SendEmailAsync(user.Email, subject, body);
+
+
+            return new BaseResponse<UserResponse>
+            {
+                Message = "Registration successful. Check your email for the confirmation code.",
+                IsSuccessful = true,
+                Value = new UserResponse
+                {
+                    Id = user.Id,
+                    FullName = user.FirstName + " " + user.LastName,
+                    Email = user.Email,
+                    RoleName = user.Role.ToString(),
+                }
+            };
         }
 
 
@@ -191,7 +223,6 @@ namespace InternPulse4.Core.Application.Services
                     FullName = user.FirstName + " " + user.LastName,
                     Email = user.Email,
                     RoleName = user.Role.ToString(),
-                    IsDeleted = user.IsDeleted,
                 }).ToList(),
             };
         }
@@ -328,6 +359,70 @@ namespace InternPulse4.Core.Application.Services
                 IsSuccessful = false
             };
         }
+
+
+        public async Task<BaseResponse<UserResponse>> ConfirmEmailAsync(ConfirmEmail request)
+        {
+            var user = await _userRepository.GetAsync(request.Email);
+            if (user == null)
+            {
+                return new BaseResponse<UserResponse>
+                {
+                    IsSuccessful = false,
+                    Message = "User not found"
+                };
+            }
+
+            if (user.IsEmailConfirmed)
+            {
+                return new BaseResponse<UserResponse>
+                {
+                    IsSuccessful = false,
+                    Message = "Email already confirmed"
+                };
+            }
+
+            if (user.EmailConfirmationToken != request.Token)
+            {
+                return new BaseResponse<UserResponse>
+                {
+                    IsSuccessful = false,
+                    Message = "Invalid confirmation token"
+                };
+            }
+
+            if (user.TokenExpiry < DateTime.UtcNow)
+            {
+                return new BaseResponse<UserResponse>
+                {
+                    IsSuccessful = false,
+                    Message = "Token has expired"
+                };
+            }
+
+            user.IsEmailConfirmed = true;
+            user.EmailConfirmationToken = string.Empty;
+            user.TokenExpiry = null;
+
+            _userRepository.Update(user);
+            await _unitOfWork.SaveAsync();
+
+            return new BaseResponse<UserResponse>
+            {
+                IsSuccessful = true,
+                Message = "Email confirmed successfully",
+                Value = new UserResponse
+                {
+                    Id = user.Id,
+                    FullName = user.FirstName + " " + user.LastName,
+                    Email = user.Email,
+                    RoleName = user.Role.ToString(),
+                }
+            };
+
+
+        }
+
 
     }
 }
