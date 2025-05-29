@@ -5,7 +5,7 @@ namespace InternPulse4.Core.Domain.Entities
     public class Auditables
     {
         public int Id { get; set; }
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
         public string? CreatedBy { get; set; }
         public string? ModifiedBy { get; set; }
         [Column(TypeName = "timestamp with time zone")]

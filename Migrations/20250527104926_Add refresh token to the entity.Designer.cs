@@ -3,6 +3,7 @@ using System;
 using InternPulse4.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,13 +12,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace InternPulse4.Migrations
 {
     [DbContext(typeof(InternPulseContext))]
-    partial class InternPulseContextModelSnapshot : ModelSnapshot
+    [Migration("20250527104926_Add refresh token to the entity")]
+    partial class Addrefreshtokentotheentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.11")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -48,9 +51,7 @@ namespace InternPulse4.Migrations
                         .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
+                        .HasColumnType("boolean");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -83,12 +84,12 @@ namespace InternPulse4.Migrations
                         {
                             Id = 1,
                             CreatedBy = "ManualRegistration",
-                            DateCreated = new DateTime(2025, 5, 29, 11, 38, 24, 714, DateTimeKind.Utc).AddTicks(7994),
+                            DateCreated = new DateTime(2025, 5, 27, 10, 49, 26, 123, DateTimeKind.Utc).AddTicks(1271),
                             Email = "oyebohm@gmail.com",
                             FirstName = "Hasbiy",
                             IsDeleted = false,
                             LastName = "Oyebo",
-                            Password = "$2a$11$bJQtEOAnxrcSx1ub5PwYBOpv4X5WqlZrL4Np18UFi/cLOWs2mrEBi",
+                            Password = "$2a$11$7mAWMsrUZ09NOQguZiBUEOHjacRLX9a/8b6YoJOgRKCEsndK8kZKa",
                             RememberMe = false,
                             Role = 1
                         });

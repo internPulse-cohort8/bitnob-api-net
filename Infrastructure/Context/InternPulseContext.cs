@@ -1,4 +1,5 @@
-﻿using InternPulse4.Core.Domain.Entities;
+﻿using Google;
+using InternPulse4.Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Text.Json;
@@ -13,7 +14,6 @@ namespace InternPulse4.Infrastructure.Context
         public DbSet<User> Users => Set<User>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
                 foreach (var property in entityType.GetProperties())
@@ -28,20 +28,28 @@ namespace InternPulse4.Infrastructure.Context
             }
 
             modelBuilder.Entity<User>().Property<int>("Id").ValueGeneratedOnAdd();
+
+            
+            modelBuilder.Entity<User>()
+                .Property(u => u.IsDeleted)
+                .HasDefaultValue(false);
+
             base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<User>().HasData(
-            new User
-            {
-                Id = 1,
-                DateCreated = DateTime.UtcNow,
-                FirstName = "Hasbiy",
-                LastName = "Oyebo",
-                IsDeleted = false,
-                Email = "oyebohm@gmail.com",
-                Password = BCrypt.Net.BCrypt.HashPassword("hasbiyallah"),
-                Role = Core.Domain.Enums.Role.Admin,
-                CreatedBy = "ManualRegistration",
-            });
+                new User
+                {
+                    Id = 1,
+                    DateCreated = DateTime.UtcNow,
+                    FirstName = "Hasbiy",
+                    LastName = "Oyebo",
+                    IsDeleted = false,
+                    Email = "oyebohm@gmail.com",
+                    Password = BCrypt.Net.BCrypt.HashPassword("hasbiyallah"),
+                    Role = Core.Domain.Enums.Role.Admin,
+                    CreatedBy = "ManualRegistration",
+                });
         }
+
     }
 }
