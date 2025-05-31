@@ -12,6 +12,7 @@ namespace InternPulse4.Infrastructure.Context
 
         }
         public DbSet<User> Users => Set<User>();
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 

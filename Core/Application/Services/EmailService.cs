@@ -48,5 +48,25 @@ namespace InternPulse4.Core.Application.Services
             }
         }
 
+        public async Task SendPasswordResetEmailAsync(string toEmail, string userName, string resetToken, string userId)
+        {
+            // REMOVE the frontendResetPasswordUrl logic
+
+            var subject = "Reset Your Password";
+            var body = $@"
+                <p>Hello {userName},</p>
+                <p>We received a request to reset the password for your account.</p>
+                <p>To reset your password, please go to your application's password reset page (e.g., your login page or a dedicated password reset page) and enter the following information:</p>
+                <ul>
+                    <li><strong>Your Email:</strong> {toEmail}</li>
+                    <li><strong>Reset Token:</strong> <code>{resetToken}</code></li>
+                </ul>
+                <p>This token is valid for {_smtpSettings.Port} minutes (or whatever you configure for token expiry).</p>
+                <p>If you did not request a password reset, please ignore this email.</p>
+                <p>Thanks,<br>Your Application Team</p>";
+
+            await SendEmailAsync(toEmail, subject, body);
+        }
+
     }
 }
