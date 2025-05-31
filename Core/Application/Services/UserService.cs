@@ -6,6 +6,7 @@ using InternPulse4.Models;
 using static InternPulse4.Models.UserModel.UserRequest;
 using System.Security.Claims;
 using Google.Apis.Auth;
+using Microsoft.AspNetCore.Identity;
 
 namespace InternPulse4.Core.Application.Services
 {
@@ -91,12 +92,12 @@ namespace InternPulse4.Core.Application.Services
                         Best regards,  
                      ";
 
-            await _emailService.SendEmailAsync(user.Email, subject, body);
+          await _emailService.SendEmailAsync(user.Email, subject, body);
 
 
             return new BaseResponse<UserResponse>
             {
-                Message = "Registration successful. Check your email for the confirmation code.",
+                Message = $"Registration successful. Check your email for the confirmation code.",
                 IsSuccessful = true,
                 Value = new UserResponse
                 {
@@ -423,6 +424,6 @@ namespace InternPulse4.Core.Application.Services
 
         }
 
-
+      
     }
 }

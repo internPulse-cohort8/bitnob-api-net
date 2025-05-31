@@ -37,6 +37,8 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped<JwtTokenGenerator>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+builder.Services.AddScoped<PasswordHasherService>();
+builder.Services.Configure<SecuritySettings>(builder.Configuration.GetSection("SecuritySettings"));
 
 
 builder.Services.AddCors(cors =>
@@ -107,6 +109,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Logging.AddDebug();
+
 
 var app = builder.Build();
 
